@@ -21,39 +21,47 @@ SC_AGENT_IMPLEMENTATION(GamAgent)
 
   SC_LOG_DEBUG("INIT Agent: GamAgent");
 
-  if (!edgeAddr.IsValid())
-	  return SC_RESULT_ERROR;
-
-  SC_LOG_DEBUG("GamAgent is Valid");
-
-  ScAddr questionNode = ms_context->GetEdgeTarget(edgeAddr);
-  SC_LOG_DEBUG(ms_context->GetName());
   
-  ScAddr param = IteratorUtils::getFirstFromSet(ms_context.get(), questionNode);
-
-  if (!param.IsValid())
-	  return SC_RESULT_ERROR_INVALID_PARAMS;
-
-  ScAddr answer = ms_context->CreateNode(ScType::NodeConstStruct);
-  ms_context->CreateEdge(ScType::EdgeAccessConstPosPerm, answer, param);
-  ms_context->CreateEdge(ScType::EdgeAccessConstPosPerm, answer, Keynodes::find_gamelton_cicle);
-
-  ScIterator5Ptr iterator5 = IteratorUtils::getIterator5(ms_context.get(), param, Keynodes::find_gamelton_cicle, false);
-  while (iterator5->Next())
-  {
-    ScAddr sheaf = iterator5->Get(0);
-    ms_context->CreateEdge(ScType::EdgeAccessConstPosPerm, answer, iterator5->Get(1));
-    ms_context->CreateEdge(ScType::EdgeAccessConstPosPerm, answer, sheaf);
-    ms_context->CreateEdge(ScType::EdgeAccessConstPosPerm, answer, iterator5->Get(3));
-    GenerationUtils::addSetToOutline(ms_context.get(), sheaf, answer);
-  }
-
-
-  AgentUtils::finishAgentWork(ms_context.get(), questionNode, answer);
-
+  SC_LOG_DEBUG("Vertex: ");
+ 	// Создаём итератор c названием it с пятью элементами (0, 1, 2, 3, 4)
+ 	// 0 - адрес графа
+ 	// 1 - неизвестная дуга принадлежности
+ 	// 2 - неизвестная вершина
+ 	// 3 - неизвестная дуга принадлежности
+ 	// 4 - ролевое отношение вершина'
+	
+  ScAddr node = ms_context->GetEdgeTarget(edgeAddr);
   
+  
+ 	ScIterator3Ptr it = ms_context->Iterator3(
+ 		node,
+ 		ScType::EdgeAccessConstPosPerm,
+ 		ScType(0)
+ 		);
 
-  return SC_RESULT_OK;
+	SC_LOG_DEBUG("test");
+	while (it->Next()) {
+		SC_LOG_DEBUG("BLYAT");
+		node = it->Get(2);
+		
+        ScType type = ms_context->GetElementType(node);
+
+        if (type.IsNode() == ScType::Node)
+        {
+            std::string data;
+            data = ms_context->HelperGetSystemIdtf(node);
+		    SC_LOG_DEBUG(data);
+        }
+	}
+
+	ScAddr answer = ms_context->CreateNode(ScType::NodeConstStruct);
+	ms_context->CreateEdge(ScType::EdgeAccessConstPosPerm,
+                                 node,
+                                 answer);
+
+	// utils::AgentUtils::finishAgentWork(ms_context.get(), node, answer);
+		
+    return SC_RESULT_OK;
 }
 
 } // namespace exampleModul
