@@ -10,5 +10,9 @@ namespace testModule
 {
 
 ScAddr Keynodes::find_gamelton_cicle;
+ScAddr Keynodes::nrel_answer;
+ScAddr Keynodes::system_element;
+ScAddr Keynodes::question_finished;
+ScAddr Keynodes::rrel_key_sc_element;
 
 }

@@ -23,6 +23,20 @@ public:
 
   SC_PROPERTY(Keynode("find_gamelton_cicle"), ForceCreate)
   static ScAddr find_gamelton_cicle;
+
+  SC_PROPERTY(Keynode("nrel_answer"), ForceCreate)
+  static ScAddr nrel_answer;
+
+  SC_PROPERTY(Keynode("system_element"), ForceCreate)
+  static ScAddr system_element;
+
+  SC_PROPERTY(Keynode("question_finished"), ForceCreate)
+  static ScAddr question_finished;
+
+  SC_PROPERTY(Keynode("rrel_key_sc_element"), ForceCreate)
+  static ScAddr rrel_key_sc_element;
+  
+
 };
 
 } // namespace exampleModule
