@@ -17,7 +17,7 @@ using namespace utils;
 namespace testModule
 {
 
-const bool DEBUG_ON = false;
+const bool DEBUG_ON = true;
 
 
 void debug(string msg);
@@ -60,6 +60,7 @@ SC_AGENT_IMPLEMENTATION(GamAgent)
 				vector<ScAddr> allVertexes = getAllVertexes(ms_context, structNode);
 				// путь в графе (если есть)
 				vector<ScAddr> path(allVertexes.size(), allVertexes[0]);
+				debug("f_vertex: " + ms_context->HelperGetSystemIdtf(allVertexes[0]));
 
 
 				SC_LOG_DEBUG("graph name: " + ms_context->HelperGetSystemIdtf(structNode));	
@@ -93,22 +94,29 @@ SC_AGENT_IMPLEMENTATION(GamAgent)
 bool hamilton(const std::unique_ptr<ScMemoryContext>& context, int currentPosition, vector<ScAddr> &path, const vector<ScAddr> &allVertexes) {
 		debug("hamilton:");
 		if (currentPosition == allVertexes.size()) {
-			 debug("hamilton: pos == size");
-				return context->HelperCheckEdge(path[currentPosition-1], path[0], ScType(0));
+			 debug("hamilton: pos == size; pos=" + to_string(currentPosition) + "; size=" + to_string(allVertexes.size()));
+				debug("hamilron: l_p = " + context->HelperGetSystemIdtf(path[currentPosition-1]) + ", f_p = " + context->HelperGetSystemIdtf(path[0]));
+
+				debug("hamilron: edge exists? = " + to_string(context->HelperCheckEdge(path[currentPosition-1], path[0], ScType(0))));
+				return context->HelperCheckEdge(path[currentPosition-1], path[0], ScType(0)); // -1
 		}
-		debug("hamilton: pos != size");
+		debug("hamilton: pos != size; pos=" + to_string(currentPosition) + "; size=" + to_string(allVertexes.size()));
 
 		 for (auto &vertex : allVertexes) {
 			debug("hamilton: for-vertx: " + context->HelperGetSystemIdtf(vertex));
 
 				if (isSafe(context, vertex, currentPosition, path)) {
-					 debug("hamilton: for-vertx: " + context->HelperGetSystemIdtf(vertex) + "is safe");
 					 path[currentPosition] = vertex;
 						
-						if (hamilton(context, currentPosition + 1, path, allVertexes))
+						if (hamilton(context, currentPosition + 1, path, allVertexes)) {
+							 debug("hamilton: return true");
 								return true;
+						}
+						debug("hamilton: return false");
+
+						path[currentPosition] = allVertexes[0];
+								
 				}
-				debug("hamilton: for-vertx: " + context->HelperGetSystemIdtf(vertex) + " is NOT safe");
 		}
 
   debug("hamilton: after loop");
@@ -117,15 +125,20 @@ bool hamilton(const std::unique_ptr<ScMemoryContext>& context, int currentPositi
 
 
 bool isSafe(const std::unique_ptr<ScMemoryContext>& context, ScAddr vertex, int currentPosition, vector<ScAddr> &path) {
-		if (!context->HelperCheckEdge(path[currentPosition-1], vertex, ScType(0))) 
+		if (!context->HelperCheckEdge(path[currentPosition-1], vertex, ScType(0))) { // -1
+			 debug("hamilton -> isSafe: edge not exist");
 				return false;
+		}
 
 		for (auto &v : path) {
-			 if (v == vertex)
-				  return false;
+			 if (v == vertex) {
+					debug("hamilton -> isSafe: vertex already in path");
+					return false;
+				} 
 		}
-		
+		debug("hamilton -> isSafe: true");
 		return true;
+		
 }
 
 
