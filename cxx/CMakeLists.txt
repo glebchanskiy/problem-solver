@@ -1,2 +1,2 @@
 add_subdirectory(exampleModule)
-add_subdirectory(testModule)
+add_subdirectory(courseWorkModule)
