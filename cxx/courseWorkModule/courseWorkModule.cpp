@@ -6,7 +6,7 @@
 
 #include "courseWorkModule.hpp"
 #include "keynodes/keynodes.hpp"
-#include "agents/ASearchHamiltonSycle.hpp"
+#include "agents/ASearchHamiltonCycle.hpp"
 
 
 
@@ -19,14 +19,14 @@ sc_result CourseWorkModule::InitializeImpl()
   if (!courseWorkNamespace::Keynodes::InitGlobal())
     return SC_RESULT_ERROR;
 
-  SC_AGENT_REGISTER(ASearchHamiltonSycle)
+  SC_AGENT_REGISTER(ASearchHamiltonCycle)
 
   return SC_RESULT_OK;
 }
 
 sc_result CourseWorkModule::ShutdownImpl()
 {
-  SC_AGENT_UNREGISTER(ASearchHamiltonSycle)
+  SC_AGENT_UNREGISTER(ASearchHamiltonCycle)
 
   return SC_RESULT_OK;
 }
