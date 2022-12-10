@@ -7,6 +7,8 @@
 #include "courseWorkModule.hpp"
 #include "keynodes/keynodes.hpp"
 #include "agents/ASearchHamiltonCycle.hpp"
+#include "agents/ASearchBiconnectedGraph.hpp"
+#include "agents/ASearchPathInGraph.hpp"
 
 
 
@@ -20,6 +22,8 @@ sc_result CourseWorkModule::InitializeImpl()
     return SC_RESULT_ERROR;
 
   SC_AGENT_REGISTER(ASearchHamiltonCycle)
+  SC_AGENT_REGISTER(ASearchBiconnectedGraph)
+  SC_AGENT_REGISTER(ASearchPathInGraph)
 
   return SC_RESULT_OK;
 }
@@ -27,6 +31,8 @@ sc_result CourseWorkModule::InitializeImpl()
 sc_result CourseWorkModule::ShutdownImpl()
 {
   SC_AGENT_UNREGISTER(ASearchHamiltonCycle)
+  SC_AGENT_UNREGISTER(ASearchBiconnectedGraph)
+  SC_AGENT_UNREGISTER(ASearchPathInGraph)
 
   return SC_RESULT_OK;
 }

@@ -24,19 +24,18 @@ public:
   SC_PROPERTY(Keynode("question_search_hamilton_cycle"), ForceCreate)
   static ScAddr question_search_hamilton_cycle;
 
+  SC_PROPERTY(Keynode("question_search_biconnected_graph"), ForceCreate)
+  static ScAddr question_search_biconnected_graph;
+
   SC_PROPERTY(Keynode("nrel_answer"), ForceCreate)
   static ScAddr nrel_answer;
 
-  SC_PROPERTY(Keynode("system_element"), ForceCreate)
-  static ScAddr system_element;
+  SC_PROPERTY(Keynode("question_search_path_in_graph"), ForceCreate)
+  static ScAddr question_search_path_in_graph;
 
-  SC_PROPERTY(Keynode("question_finished"), ForceCreate)
-  static ScAddr question_finished;
-
-  SC_PROPERTY(Keynode("rrel_key_sc_element"), ForceCreate)
-  static ScAddr rrel_key_sc_element;
-  
+  SC_PROPERTY(Keynode("rel_first_vertex"), ForceCreate)
+  static ScAddr rel_first_vertex;
 
 };
 
-} // namespace exampleModule
+} // namespace courseWorkNamespace

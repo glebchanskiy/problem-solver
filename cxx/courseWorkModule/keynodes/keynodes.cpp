@@ -11,8 +11,8 @@ namespace courseWorkNamespace
 
 ScAddr Keynodes::question_search_hamilton_cycle;
 ScAddr Keynodes::nrel_answer;
-ScAddr Keynodes::system_element;
-ScAddr Keynodes::question_finished;
-ScAddr Keynodes::rrel_key_sc_element;
+ScAddr Keynodes::question_search_biconnected_graph;
+ScAddr Keynodes::question_search_path_in_graph;
+ScAddr Keynodes::rel_first_vertex;
 
 }

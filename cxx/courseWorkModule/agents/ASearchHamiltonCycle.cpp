@@ -17,8 +17,6 @@ using namespace utils;
 namespace courseWorkNamespace
 {
 
-const bool DEBUG_ON = true;
-
 
 void debug(string msg);
 
@@ -41,8 +39,6 @@ void addToAnswer(const std::unique_ptr<ScMemoryContext>& context, ScAddr answer,
 ScAddr getIfExist(const std::unique_ptr<ScMemoryContext>& context, ScAddr startNode);
 
 vector<ScAddr> findHamiltonCycle(const std::unique_ptr<ScMemoryContext>& context, ScAddr structNode);
-
-
 
 
 
@@ -73,6 +69,25 @@ SC_AGENT_IMPLEMENTATION(ASearchHamiltonCycle)
 
 				SC_LOG_DEBUG("DEINIT [ASearchHamiltonCycle]");
     return SC_RESULT_OK;
+}
+
+
+vector<ScAddr> findHamiltonCycle(const std::unique_ptr<ScMemoryContext>& context, ScAddr structNode) {
+				vector<ScAddr> allVertexes = getAllVertexes(context, structNode);
+				vector<ScAddr> path(allVertexes.size(), allVertexes[0]);
+
+				SC_LOG_DEBUG("graph name: " + context->HelperGetSystemIdtf(structNode));	
+				SC_LOG_DEBUG("verteces count: " + to_string(allVertexes.size()));
+
+				if (hamilton(context, 1, path, allVertexes) && (allVertexes.size() > 2)) {
+							SC_LOG_COLOR(::utils::ScLog::Type::Debug, "CYCLE EXIST", ScConsole::Color::Magneta);
+							viewPath(context, path);
+				} else {
+					  SC_LOG_COLOR(::utils::ScLog::Type::Debug, "CYCLE NOT EXIST", ScConsole::Color::Red);
+							path.clear();
+				}
+
+				return path;
 }
 
 
@@ -125,23 +140,7 @@ ScAddr getIfExist(const std::unique_ptr<ScMemoryContext>& context, ScAddr startN
 }
 
 
-vector<ScAddr> findHamiltonCycle(const std::unique_ptr<ScMemoryContext>& context, ScAddr structNode) {
-				vector<ScAddr> allVertexes = getAllVertexes(context, structNode);
-				vector<ScAddr> path(allVertexes.size(), allVertexes[0]);
 
-				SC_LOG_DEBUG("graph name: " + context->HelperGetSystemIdtf(structNode));	
-				SC_LOG_DEBUG("verteces count: " + to_string(allVertexes.size()));
-
-				if (hamilton(context, 1, path, allVertexes)) {
-							SC_LOG_COLOR(::utils::ScLog::Type::Debug, "CYCLE EXIST", ScConsole::Color::Magneta);
-							viewPath(context, path);
-				} else {
-					  SC_LOG_COLOR(::utils::ScLog::Type::Debug, "CYCLE NOT EXIST", ScConsole::Color::Red);
-							path.clear();
-				}
-
-				return path;
-}
 
 
 vector<ScAddr> getAllVertexes(const std::unique_ptr<ScMemoryContext>& context, ScAddr structNode) {
@@ -152,7 +151,8 @@ vector<ScAddr> getAllVertexes(const std::unique_ptr<ScMemoryContext>& context, S
 							ScAddr node = it->Get(2);
 							ScType node_type = context->GetElementType(node);
 
-							if (node_type.IsNode() == ScType::Node) {
+							if (node_type == ScType::NodeConst) {
+								 SC_LOG_DEBUG("added: " + context->HelperGetSystemIdtf(node));
 									allVertexes.push_back(node);
 							}
 				}
@@ -232,11 +232,6 @@ void addToAnswer(const std::unique_ptr<ScMemoryContext>& context, ScAddr answer,
 }
 
 
-void debug(string msg) {
-	 if (DEBUG_ON) {
-			 SC_LOG_DEBUG(msg);
-		}
-}
 
 
 } // namespace exampleModul
