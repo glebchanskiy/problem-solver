@@ -9,6 +9,10 @@
 #include "agents/ASearchHamiltonCycle.hpp"
 #include "agents/ASearchBiconnectedGraph.hpp"
 #include "agents/ASearchPathInGraph.hpp"
+#include "agents/AFindLongestPath.hpp"
+#include "agents/ASearchCactusGraph.hpp"
+#include "agents/ASearchEdgeConnectivity.hpp"
+
 
 
 

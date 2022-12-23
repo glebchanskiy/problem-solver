@@ -3,10 +3,12 @@
 #include <sc-memory/sc_memory.hpp>
 #include <sc-memory/sc_stream.hpp>
 
-#include <sc-agents-common/utils/IteratorUtils.hpp>
 #include <sc-agents-common/utils/AgentUtils.hpp>
+#include <sc-agents-common/utils/CommonUtils.hpp>
 #include <sc-agents-common/utils/GenerationUtils.hpp>
+#include <sc-agents-common/utils/IteratorUtils.hpp>
 #include <sc-agents-common/utils/SetOperationsUtils.hpp>
+
 
 #include "ASearchBiconnectedGraph.hpp"
 
@@ -16,61 +18,32 @@ using namespace utils;
 namespace courseWorkNamespace
 {
   
-void generateAnswer(const std::unique_ptr<ScMemoryContext>& context, ScAddr startNode, ScAddr structNode, bool isBiconnected) {
-        ScAddr answer = context->CreateNode(ScType::NodeConst);
-        ScAddr edge = context->CreateEdge(ScType::EdgeDCommonConst, startNode, answer);
-        context->CreateEdge(ScType::EdgeAccessConstPosPerm, courseWorkNamespace::Keynodes::nrel_answer, edge);
-        
-        context->HelperSetSystemIdtf("'" + context->HelperGetSystemIdtf(structNode) + "' is " +
-                     (isBiconnected ? "biconnecteed" : "not biconnected"), answer);
-}
+static int counter = 0;
 
-
-vector<ScAddr> getVertexes(const std::unique_ptr<ScMemoryContext>& context, ScAddr structNode) {
-				vector<ScAddr> allVertexes;
-				ScIterator3Ptr it = context->Iterator3(structNode, ScType::EdgeAccessConstPosPerm, ScType::NodeConst);
-
-				while (it->Next()) {
-							ScAddr node = it->Get(2);
-							ScType node_type = context->GetElementType(node);
-
-							if (node_type.IsNode() == ScType::Node) {
-									allVertexes.push_back(node);
-							}
-				}
-				return allVertexes;
-}
-
-
-bool isArticulation(const std::unique_ptr<ScMemoryContext>& context, vector<ScAddr>& vertexes, int pos, 
-                    vector<bool> &visited, vector<int> &parent, vector<int> &disc, vector<int> &low) {
-    static int time = 0;
+bool isArticulationExist(ScMemoryContext *ms_context, vector<ScAddr>& vertexes, int current, 
+                    vector<bool> &v, vector<int> &p, vector<int> &d, vector<int> &l) {
+    v[current] = true;
     int dfsChild = 0;
-    visited[pos] = true;
-    disc[pos] = low[pos] = ++time; 
+    d[current] = l[current] = ++counter; 
 
-    int a;
-
-    for (int v_pos = 0; v_pos < vertexes.size(); v_pos++) {
-      if (context->HelperCheckEdge(vertexes[pos],vertexes[v_pos], ScType(0))) {
-        if (!visited[v_pos]) {
+    for (int v_current = 0; v_current < vertexes.size(); v_current++) {
+      if (ms_context->HelperCheckEdge(vertexes[current],vertexes[v_current], ScType(0)) || ms_context->HelperCheckEdge(vertexes[v_current],vertexes[current], ScType(0))) {
+        if (!v[v_current]) {
           dfsChild++;
-          parent[v_pos] = pos;
+          p[v_current] = current;
 
-          if(isArticulation(context, vertexes, v_pos, visited, parent, disc, low))
+          if(isArticulationExist(ms_context, vertexes, v_current, v, p, d, l))
             return true;
 
-          low[pos] = (low[pos] < low[v_pos]) ? low[pos] : low[v_pos];
+          l[current] = (l[current] < l[v_current]) ? l[current] : l[v_current];
 
-          if (parent[pos] == -1 && dfsChild > 1) {
+          if (p[current] == -1 && dfsChild > 1) {
             return true;
           }
-
-          if(parent[pos] != -1 && low[v_pos] >= disc[pos])
+          if(p[current] != -1 && l[v_current] >= d[current])
             return true;
-
-        } else if (v_pos != parent[pos]) {
-          low[pos] = (low[pos] < disc[v_pos]) ? low[pos] : disc[v_pos];
+        } else if (v_current != p[current]) {
+          l[current] = (l[current] < d[v_current]) ? l[current] : d[v_current];
         }
       }
     }                     
@@ -78,38 +51,24 @@ bool isArticulation(const std::unique_ptr<ScMemoryContext>& context, vector<ScAd
 }
 
 
-bool isBiconnected(const std::unique_ptr<ScMemoryContext>& context, ScAddr structNode) {
-    vector<ScAddr> vertexes = getVertexes(context, structNode);
+bool isBiconnected(ScMemoryContext *ms_context, ScAddr graph) {
+    vector<ScAddr> vertexes = IteratorUtils::getAllWithType(&(*ms_context), graph, ScType::NodeConst);
 
-    SC_LOG_DEBUG("graph: " + context->HelperGetSystemIdtf(structNode));	
-    SC_LOG_DEBUG("count: " + to_string(vertexes.size()));
-
-    vector<bool> visited(vertexes.size(), false);
-    vector<int> parent(vertexes.size(), -1);
-
-    vector<int> disc(vertexes.size());
-    vector<int> low(vertexes.size());
-
-    if(vertexes.size() < 3) {
-      SC_LOG_COLOR(::utils::ScLog::Type::Debug, "IS NOT BICONNECTED", ScConsole::Color::Magneta);
-      return false;
-    }
-      
-
-    if(isArticulation(context, vertexes, 0, visited, parent, disc, low)) {
-      SC_LOG_COLOR(::utils::ScLog::Type::Debug, "IS NOT BICONNECTED", ScConsole::Color::Magneta);
+    vector<bool> v(vertexes.size(), false);
+    vector<int> p(vertexes.size(), -1);
+    vector<int> l(vertexes.size());
+    vector<int> d(vertexes.size());
+    
+    if(vertexes.size() <= 2 || isArticulationExist(ms_context, vertexes, 0, v, p, d, l)) {
       return false;
     }
 
-    for (auto v : visited) {
-      if (!v) {
-        SC_LOG_COLOR(::utils::ScLog::Type::Debug, "IS NOT BICONNECTED", ScConsole::Color::Magneta);
+    for (auto i : v) {
+      if (!i) {
         return false;
       }
     }
-      
         
-    SC_LOG_COLOR(::utils::ScLog::Type::Debug, "IS BICONNECTED", ScConsole::Color::Magneta);
     return true; 
 }
 
@@ -119,21 +78,30 @@ SC_AGENT_IMPLEMENTATION(ASearchBiconnectedGraph)
     if (!edgeAddr.IsValid())
       return SC_RESULT_ERROR;
 
-    SC_LOG_DEBUG("INIT");
-    
-    ScAddr start = ms_context->GetEdgeTarget(edgeAddr);;
-    ScAddr graph;
+    ScAddr question = ms_context->GetEdgeTarget(edgeAddr);;
+    ScAddr structure;
 
-    ScIterator3Ptr iter = ms_context->Iterator3(start, ScType::EdgeAccessConstPosPerm, ScType::NodeConst);
+    ScIterator3Ptr iter = ms_context->Iterator3(question, ScType::EdgeAccessConstPosPerm, ScType::NodeConst);
   
     if (iter->Next()) 
-      graph = iter->Get(2);	 	
+      structure = iter->Get(2);	 	
     else 
       return SC_RESULT_ERROR_INVALID_PARAMS;
-    
-    generateAnswer(ms_context, start, graph, isBiconnected(ms_context, graph));			
 
-    SC_LOG_DEBUG("DEINIT");
+    ScAddr node = ms_context->CreateNode(ScType::NodeConst);
+    string graphIdtf = ms_context->HelperGetSystemIdtf(structure);
+
+    if(isBiconnected(&(*ms_context), structure)) {
+      ms_context->HelperSetSystemIdtf("graph '" + graphIdtf + "' is biconnected", node);
+      SC_LOG_COLOR(ScLog::Type::Debug, "graph '" + graphIdtf + "' is biconnected", ScConsole::Color::Blue);
+    } else {
+      ms_context->HelperSetSystemIdtf("graph '" + graphIdtf + "' is not biconnected", node); 
+      SC_LOG_COLOR(ScLog::Type::Debug, "graph '" + graphIdtf + "' is not biconnected", ScConsole::Color::Red);
+    }
+
+    vector<ScAddr> answer = {node};
+    AgentUtils::finishAgentWork(&(*ms_context), question, answer, true);
+    
     return SC_RESULT_OK;
 }
 

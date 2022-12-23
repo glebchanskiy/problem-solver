@@ -21,21 +21,37 @@ class Keynodes : public ScObject
 
 public:
 
-  SC_PROPERTY(Keynode("question_search_hamilton_cycle"), ForceCreate)
-  static ScAddr question_search_hamilton_cycle;
+  SC_PROPERTY(Keynode("question_find_longest_path"), ForceCreate)
+  static ScAddr question_find_longest_path;
 
   SC_PROPERTY(Keynode("question_search_biconnected_graph"), ForceCreate)
   static ScAddr question_search_biconnected_graph;
 
-  SC_PROPERTY(Keynode("nrel_answer"), ForceCreate)
-  static ScAddr nrel_answer;
+  SC_PROPERTY(Keynode("question_search_cactus_graph"), ForceCreate)
+  static ScAddr question_search_cactus_graph;
+
+  SC_PROPERTY(Keynode("question_search_edge_connectivity"), ForceCreate)
+  static ScAddr question_search_edge_connectivity;
+
+  SC_PROPERTY(Keynode("question_search_hamilton_cycle"), ForceCreate)
+  static ScAddr question_search_hamilton_cycle;
 
   SC_PROPERTY(Keynode("question_search_path_in_graph"), ForceCreate)
   static ScAddr question_search_path_in_graph;
 
+
+
+  SC_PROPERTY(Keynode("nrel_answer"), ForceCreate)
+  static ScAddr nrel_answer;
+
   SC_PROPERTY(Keynode("rel_first_vertex"), ForceCreate)
   static ScAddr rel_first_vertex;
 
+  SC_PROPERTY(Keynode("rel_start_vertex"), ForceCreate)
+  static ScAddr rel_start_vertex;
+
+  SC_PROPERTY(Keynode("rel_end_vertex"), ForceCreate)
+  static ScAddr rel_end_vertex;
 };
 
 } // namespace courseWorkNamespace
