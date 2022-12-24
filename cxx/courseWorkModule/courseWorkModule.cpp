@@ -12,6 +12,7 @@
 #include "agents/AFindLongestPath.hpp"
 #include "agents/ASearchCactusGraph.hpp"
 #include "agents/ASearchEdgeConnectivity.hpp"
+#include "agents/ASearchMaxAndMiddlePath.hpp"
 
 
 
@@ -28,6 +29,10 @@ sc_result CourseWorkModule::InitializeImpl()
   SC_AGENT_REGISTER(ASearchHamiltonCycle)
   SC_AGENT_REGISTER(ASearchBiconnectedGraph)
   SC_AGENT_REGISTER(ASearchPathInGraph)
+  SC_AGENT_REGISTER(ASearchCactusGraph)
+  SC_AGENT_REGISTER(ASearchEdgeConnectivity)
+  SC_AGENT_REGISTER(AFindLongestPath)
+  SC_AGENT_REGISTER(ASearchMaxAndMiddlePath)
 
   return SC_RESULT_OK;
 }
@@ -37,6 +42,10 @@ sc_result CourseWorkModule::ShutdownImpl()
   SC_AGENT_UNREGISTER(ASearchHamiltonCycle)
   SC_AGENT_UNREGISTER(ASearchBiconnectedGraph)
   SC_AGENT_UNREGISTER(ASearchPathInGraph)
+  SC_AGENT_UNREGISTER(ASearchCactusGraph)
+  SC_AGENT_UNREGISTER(ASearchEdgeConnectivity)
+  SC_AGENT_UNREGISTER(AFindLongestPath)
+  SC_AGENT_UNREGISTER(ASearchMaxAndMiddlePath)
 
   return SC_RESULT_OK;
 }

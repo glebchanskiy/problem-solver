@@ -39,6 +39,9 @@ public:
   SC_PROPERTY(Keynode("question_search_path_in_graph"), ForceCreate)
   static ScAddr question_search_path_in_graph;
 
+  SC_PROPERTY(Keynode("question_find_max_and_middle_path"), ForceCreate)
+  static ScAddr question_find_max_and_middle_path;
+
 
 
   SC_PROPERTY(Keynode("nrel_answer"), ForceCreate)
@@ -52,6 +55,12 @@ public:
 
   SC_PROPERTY(Keynode("rel_end_vertex"), ForceCreate)
   static ScAddr rel_end_vertex;
+
+  SC_PROPERTY(Keynode("rel_central_1"), ForceCreate)
+  static ScAddr rel_central_1;
+
+  SC_PROPERTY(Keynode("rel_central_2"), ForceCreate)
+  static ScAddr rel_central_2;
 };
 
 } // namespace courseWorkNamespace
